@@ -1,0 +1,240 @@
+#---general----
+
+variable "aws_region" {
+  description = "The AWS region to deploy resources in"
+  type        = string
+}
+
+variable "environment" {
+  type = string
+}
+
+
+variable "name" {
+  description = "Name prefix for resources"
+  type        = string
+}
+
+variable "prefix" {
+  description = "Prefix for resource names"
+  type        = string
+
+}
+
+variable "alb_log_bucket_name" {
+  description = "Globally unique S3 bucket name for ALB access logs"
+  type        = string
+}
+
+variable "domain_name" {
+  description = "The domain name for the application"
+  type        = string
+  default     = "stev6devops.2bd.net"
+}
+
+
+variable "app_name" {
+  description = "The name of the application"
+  type        = string
+
+}
+
+#Defualt tag moved under provider configuration
+#variable "aws_tags" {
+# description = "A map of tags to apply to all resources"
+#type        = map(string)
+#default = {
+# Environment = "dev"
+#Project     = "terraform-bootcamp"
+#}
+#}
+
+
+#------------------------Networking variables---------------------------
+variable "vpc_cidr" {
+  description = "The CIDR block for the VPC"
+  type        = string
+}
+
+
+variable "public_subnet_cidrs" {
+  description = "The CIDR blocks for the public subnets"
+  type        = list(string)
+}
+
+variable "private_subnet_cidrs" {
+  description = "The CIDR blocks for the private subnets"
+  type        = list(string)
+}
+
+variable "database_subnet_cidrs" {
+  type    = list(string)
+  default = []
+}
+
+
+variable "availability_zones" {
+  description = "The availability zones to use for the subnets"
+  type        = list(string)
+}
+
+variable "enable_nat_gateway" {
+  description = "Create a single NAT gateway so private subnets can reach the internet"
+  type        = bool
+  default     = true
+}
+
+variable "need_single_nat_gateway" {
+  description = "Create a single NAT gateway so private subnets can reach the internet"
+  type        = bool
+}
+
+# ---------------Security variables--------------------------
+
+variable "frontend_port" {
+  description = "Port the frontend container listens on"
+  type        = number
+  default     = 80
+}
+
+variable "backend_port" {
+  description = "Port the backend container listens on"
+  type        = number
+  default     = 8000
+}
+
+variable "db_port" {
+  description = "Database port"
+  type        = number
+  default     = 5432
+}
+
+
+#---------------------Database variables-----------------------------
+
+
+
+variable "engine_version" {
+  description = "PostgreSQL engine version"
+  type        = string
+  default     = "16"
+}
+
+variable "instance_class" {
+  description = "RDS instance class"
+  type        = string
+  default     = "db.t3.micro"
+}
+
+variable "allocated_storage" {
+  description = "Storage in GiB"
+  type        = number
+  default     = 20
+}
+
+variable "db_name" {
+  description = "Name of the initial database"
+  type        = string
+  default     = "mydb"
+}
+
+variable "username" {
+  description = "Master username"
+  type        = string
+  default     = "myuser"
+}
+
+variable "multi_az" {
+  description = "Run a standby in a second AZ (roughly doubles cost)"
+  type        = bool
+  default     = false
+}
+
+variable "skip_final_snapshot" {
+  description = "Skip the final snapshot on destroy. Set to false for production."
+  type        = bool
+  default     = true
+}
+
+variable "secret_recovery_window_in_days" {
+  description = "Days before a deleted secret is permanently removed. 0 = delete immediately (convenient for dev)."
+  type        = number
+  default     = 0
+}
+
+
+#--------------------ECS variables-----------------------------
+
+# Frontend (React + Express, behind the ALB)
+
+variable "frontend_image" {
+  description = "Frontend image URI for the initial task definition"
+  type        = string
+}
+
+variable "frontend_cpu" {
+  description = "Frontend task CPU units"
+  type        = number
+  default     = 256
+}
+
+variable "frontend_memory" {
+  description = "Frontend task memory (MiB)"
+  type        = number
+  default     = 512
+}
+
+variable "frontend_desired_count" {
+  description = "Initial number of frontend tasks"
+  type        = number
+  default     = 1
+}
+
+variable "frontend_autoscaling_min" {
+  description = "Minimum number of frontend tasks"
+  type        = number
+  default     = 1
+}
+
+variable "frontend_autoscaling_max" {
+  description = "Maximum number of frontend tasks"
+  type        = number
+  default     = 2
+}
+
+# Backend (Flask API, private, reached via Service Connect)
+
+variable "backend_image" {
+  description = "Backend image URI for the initial task definition"
+  type        = string
+}
+
+variable "backend_cpu" {
+  description = "Backend task CPU units"
+  type        = number
+  default     = 256
+}
+
+variable "backend_memory" {
+  description = "Backend task memory (MiB)"
+  type        = number
+  default     = 512
+}
+
+variable "backend_desired_count" {
+  description = "Initial number of backend tasks"
+  type        = number
+  default     = 1
+}
+
+variable "backend_autoscaling_min" {
+  description = "Minimum number of backend tasks"
+  type        = number
+  default     = 1
+}
+
+variable "backend_autoscaling_max" {
+  description = "Maximum number of backend tasks"
+  type        = number
+  default     = 2
+}

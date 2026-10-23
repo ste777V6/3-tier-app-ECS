@@ -165,6 +165,13 @@ variable "secret_recovery_window_in_days" {
 
 #--------------------ECS variables-----------------------------
 
+variable "enable_container_insights" {
+  description = "Enable Container Insights (extra cost, recommended for production)"
+  type        = bool
+  default     = false
+}
+
+
 # Frontend (React + Express, behind the ALB)
 
 variable "frontend_image" {
